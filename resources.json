@@ -1,0 +1,33 @@
+{
+  "$schema": ".az-env-schema.json",
+  "resource_group": {
+    "name": "rg-graves",
+    "subscriptionName": "ASD Lab"
+  },
+  "storage_accounts": [
+    {
+        "name": "saadammasterschema",
+        "sku": {
+            "name": "Standard_LRS"
+        },
+        "kind": "StorageV2",
+        "properties": {
+            "accessTier": "Hot"
+        }
+    }
+  ],
+  "blob_services": [
+    {
+        "storage_account_parent": "saadammasterschema"
+    }
+  ],
+  "storage_containers": [
+    {
+        "name": "containeradamtest",
+        "storage_account_parent": "saadammasterschema",
+        "properties": {
+            "publicAccess": "None"
+        }
+    }
+  ]
+}
