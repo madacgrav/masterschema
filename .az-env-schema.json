@@ -153,99 +153,11 @@
                     }
                 },
                 "access_policies": {
-                    "type": "object",
-                    "description": "",
-                    "propertyNames": {
-                        "pattern": "^[0-9a-zA-Z-_]*$"
-                      },
-                    "patternProperties": {
-                        "^[0-9a-zA-Z-_]*$": {
-                            "type": "object",
-                            "description": "",
-                            "properties": {
-                                "object_id": {
-                                    "type": "string",
-                                    "description": "Id of the principal in Azure."
-                                },
-                                "tenant_id": {
-                                    "type": "string",
-                                    "description": "Id of the tenant in Azure."
-                                },
-                                "key_permissions": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string",
-                                        "enum": [
-                                            "Backup",
-                                            "Create",
-                                            "Decrypt",
-                                            "Delete",
-                                            "Encrypt",
-                                            "Get",
-                                            "Import",
-                                            "List",
-                                            "Purge",
-                                            "Recover",
-                                            "Restore",
-                                            "Sign",
-                                            "UnwrapKey",
-                                            "Update",
-                                            "Verify",
-                                            "WrapKey"
-                                        ],
-                                        "uniqueItems": true
-                                    }
-                                },
-                                "secret_permissions": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string",
-                                        "enum": [
-                                            "Backup",
-                                            "Delete",
-                                            "Get",
-                                            "List",
-                                            "Purge",
-                                            "Recover",
-                                            "Restore",
-                                            "Set"
-                                        ],
-                                        "uniqueItems": true
-                                    }
-                                },
-                                "certificate_permissions": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string",
-                                        "enum": [
-                                            "Create",
-                                            "Delete",
-                                            "Deleteissuers",
-                                            "Get",
-                                            "Getissuers",
-                                            "Import",
-                                            "List",
-                                            "Listissuers",
-                                            "Managecontacts",
-                                            "Manageissuers",
-                                            "Purge",
-                                            "Recover",
-                                            "Setissuers",
-                                            "Update"
-                                        ],
-                                        "uniqueItems": true
-                                    }
-                                }
-                            },
-                            "required": [
-                                "tenant_id",
-                                "object_id",
-                                "key_permissions",
-                                "secret_permissions",
-                                "certificate_permissions"
-                            ]
-                        }
-                    }
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/access_policy"
+                    },
+                    "uniqueItems": true
                 }
             },
             "required": [
@@ -737,6 +649,92 @@
                 "storage_account_parent"
             ]
         },
+        "access_policy": {
+            "type": "object",
+            "description": "",
+            "properties": {
+                "object_id": {
+                    "type": "string",
+                    "description": "Id of the principal in Azure."
+                },
+                "tenant_id": {
+                    "type": "string",
+                    "description": "Id of the tenant in Azure."
+                },
+                "key_permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "Backup",
+                            "Create",
+                            "Decrypt",
+                            "Delete",
+                            "Encrypt",
+                            "Get",
+                            "Import",
+                            "List",
+                            "Purge",
+                            "Recover",
+                            "Restore",
+                            "Sign",
+                            "UnwrapKey",
+                            "Update",
+                            "Verify",
+                            "WrapKey"
+                        ],
+                        "uniqueItems": true
+                    }
+                },
+                "secret_permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "Backup",
+                            "Delete",
+                            "Get",
+                            "List",
+                            "Purge",
+                            "Recover",
+                            "Restore",
+                            "Set"
+                        ],
+                        "uniqueItems": true
+                    }
+                },
+                "certificate_permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "Create",
+                            "Delete",
+                            "Deleteissuers",
+                            "Get",
+                            "Getissuers",
+                            "Import",
+                            "List",
+                            "Listissuers",
+                            "Managecontacts",
+                            "Manageissuers",
+                            "Purge",
+                            "Recover",
+                            "Setissuers",
+                            "Update"
+                        ],
+                        "uniqueItems": true
+                    }
+                }
+            },
+            "required": [
+                "tenant_id",
+                "object_id",
+                "key_permissions",
+                "secret_permissions",
+                "certificate_permissions"
+            ]
+        },        
         "cors_rule": {
             "type": "object",
             "description": "Block describing the rules for the cors configuration",
