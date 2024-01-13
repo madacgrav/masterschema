@@ -41,9 +41,218 @@
                 "$ref": "#/$defs/storage_container"
             },
             "uniqueItems": true
+        },
+        "keyvaults": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/keyvault"
+            },
+            "uniqueItems": true
+        },
+        "mssql_databases": {
+            "type": "array",
+            "description": "",
+            "items": {
+                "$ref": "#/$defs/mssql_database"
+            },
+            "uniqueItems": true
+        },
+        "mssql_servers": {
+            "type": "array",
+            "description": "",
+            "items": {
+                "$ref": "#/$defs/mssql_server"
+            },
+            "uniqueItems": true
         }
     },
     "$defs": {
+        "mssql_database": {
+            "type": "object",
+            "description": "",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": ""
+                },
+                "max_size_gb": {
+                    "type": "integer",
+                    "description": ""
+                },
+                "sku_name": {
+                    "type": "string",
+                    "enum": [
+                        "S2",
+                        "P1"
+                    ]
+                }
+            }
+        },
+        "mssql_server": {
+            "description": "",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "."
+                },
+                "azuread_administrator" : {
+                    "login_username" : {
+                        "type" : "string",
+                        "description": ""
+                    },
+                    "object_id" : {
+                        "type" : "string",
+                        "description": ""
+                    }
+                },
+                "firewall_rules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/firewall_rule"
+                    },
+                    "uniqueItems": true
+                },
+                "administrator_login_username" : {
+                    "type" : "string",
+                    "description": ""
+                },
+                "administrator_login_password" : {
+                    "type" : "string",
+                    "description": ""
+                }
+            },
+            "required": [
+                "name",
+                "azuread_administrator"
+            ]
+        },
+        "keyvault": {
+            "type": "object",
+            "description": "",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The name of the keyvault."
+                },
+                "sku_name": {
+                    "type": "string",
+                    "description": "The Name of the SKU used for this Key Vault. Possible values are standard and premium.",
+                    "enum": [
+                        "standard",
+                        "premium"
+                    ]
+                },
+                "allowed_ips":{
+                    "type":"array",
+                    "items": {
+                        "type":"string",
+                        "description": "IP Address in CIDR format",
+                        "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}($|/[1-9]$|/[1-2][0-9]$|/3[0-2]$)",
+                        "uniqueItems": true
+                    }
+                },
+                "access_policies": {
+                    "type": "object",
+                    "description": "",
+                    "propertyNames": {
+                        "pattern": "^[0-9a-zA-Z-_]*$"
+                      },
+                    "patternProperties": {
+                        "^[0-9a-zA-Z-_]*$": {
+                            "type": "object",
+                            "description": "",
+                            "properties": {
+                                "object_id": {
+                                    "type": "string",
+                                    "description": "Id of the principal in Azure."
+                                },
+                                "tenant_id": {
+                                    "type": "string",
+                                    "description": "Id of the tenant in Azure."
+                                },
+                                "key_permissions": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Backup",
+                                            "Create",
+                                            "Decrypt",
+                                            "Delete",
+                                            "Encrypt",
+                                            "Get",
+                                            "Import",
+                                            "List",
+                                            "Purge",
+                                            "Recover",
+                                            "Restore",
+                                            "Sign",
+                                            "UnwrapKey",
+                                            "Update",
+                                            "Verify",
+                                            "WrapKey"
+                                        ],
+                                        "uniqueItems": true
+                                    }
+                                },
+                                "secret_permissions": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Backup",
+                                            "Delete",
+                                            "Get",
+                                            "List",
+                                            "Purge",
+                                            "Recover",
+                                            "Restore",
+                                            "Set"
+                                        ],
+                                        "uniqueItems": true
+                                    }
+                                },
+                                "certificate_permissions": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Create",
+                                            "Delete",
+                                            "Deleteissuers",
+                                            "Get",
+                                            "Getissuers",
+                                            "Import",
+                                            "List",
+                                            "Listissuers",
+                                            "Managecontacts",
+                                            "Manageissuers",
+                                            "Purge",
+                                            "Recover",
+                                            "Setissuers",
+                                            "Update"
+                                        ],
+                                        "uniqueItems": true
+                                    }
+                                }
+                            },
+                            "required": [
+                                "tenant_id",
+                                "object_id",
+                                "key_permissions",
+                                "secret_permissions",
+                                "certificate_permissions"
+                            ]
+                        }
+                    }
+                }
+            },
+            "required": [
+                "name",
+                "sku_name"
+            ]
+        },
         "storage_account": {
             "type": "object",
             "properties": {
@@ -634,6 +843,29 @@
                     "blob_service_parent"
                 ]
             }
+        },
+        "firewall_rule": {
+            "type": "object",
+            "description": "",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The name of the firewall rule."
+                },
+                "start_ip_address": {
+                    "type": "string",
+                    "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}($|/[1-9]$|/[1-2][0-9]$|/3[0-2]$)"
+                },
+                "end_ip_address": {
+                    "type": "string",
+                    "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}($|/[1-9]$|/[1-2][0-9]$|/3[0-2]$)"
+                }
+            },
+            "required": [
+                "name",
+                "start_ip_address",
+                "end_ip_address"
+            ]
         }
     }
 }
