@@ -11,23 +11,75 @@
             "name": "Standard_LRS"
         },
         "kind": "StorageV2",
-        "properties": {
-            "accessTier": "Hot"
-        }
+        "accessTier": "Hot",
+        "allowBlobPublicAccess": false,
+        "allowSharedKeyAccess": false,
+        "minimumTlsVersion": "TLS1_2",
+        "azureFilesIdentityBasedAuthentication": {},
+        "networkAcls": { },
+        "customDomain": {},
+        "dnsEndPointType": "",
+        "defaultToOAuthAuthentication": false,
+        "encryption": {},
+        "extendedLocation": {},
+        "immutableStorageWithVersioning": {},
+        "isHnsEnabled": false,
+        "isLargeFileSharesEnabled": false,
+        "routingPreference": {},
+        "supportsHttpsTrafficOnly": false,
+        "sasPolicy": {},
+        "isLocalBackupEnabled": false,
+        "isNfsV3Enabled": false,
+        "isSfsEnabled": false,
+        "keypolicy": {},
+        "largeFileSharesState": "Disabled",
+        "publicNetworkAccess": "Enabled",
+        "routingprefrence": {}
     }
   ],
   "blob_services": [
     {
-        "storage_account_parent": "saadammasterschema"
+        "storage_account_parent": "saadammasterschema",
+        "cors": {},
+        "delete_retention_policy": {},
+        "container_delete_retention_policy": {},
+        "isversioning_enabled": false
     }
   ],
   "storage_containers": [
     {
         "name": "containeradamtest",
         "storage_account_parent": "saadammasterschema",
-        "properties": {
-            "publicAccess": "None"
-        }
+        "publicAccess": "None",
+        "defaultEncryptionScope": "",
+        "denyEncryptionScopeOverride": false,
+        "enableNfsV3AllSquash": true,
+        "enableNfsV3RootSquash": false        
+    }
+  ],
+  "keyvaults": [
+    {
+      "name": "kvadamtesting",
+      "sku_name": "premium",
+      "access_policies": [
+      ],
+      "networkAcls": {}
+    }
+  ],
+  "mssql_servers": [
+    { 
+      "name": "sqlserveradamtest",
+      "administrator_login_username": "sqladmin",
+      "administrator_login_password": "P@ssw0rd1234"
+
+    }
+  ],
+  "mssql_databases": [
+    {
+      "name": "sqldbadamtest",
+      "server_parent": "sqlserveradamtest",
+      "collation": "SQL_Latin1_General_CP1_CI_AS",
+      "max_size_bytes": "2147483648"
     }
   ]
 }
