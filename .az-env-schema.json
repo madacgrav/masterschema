@@ -123,8 +123,7 @@
                 }
             },
             "required": [
-                "name",
-                "azuread_administrator"
+                "name"
             ]
         },
         "keyvault": {
@@ -143,13 +142,54 @@
                         "premium"
                     ]
                 },
-                "allowed_ips":{
-                    "type":"array",
-                    "items": {
-                        "type":"string",
-                        "description": "IP Address in CIDR format",
-                        "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}($|/[1-9]$|/[1-2][0-9]$|/3[0-2]$)",
-                        "uniqueItems": true
+                "networkAcls" : {
+                    "type": "object",
+                    "properties" : {
+                        "bypass" : {
+                            "type": "string",
+                            "description": "The bypass",
+                            "enum": [
+                                "AzureServices",
+                                "None"
+                            ]
+                        },
+                        "defaultAction" : {
+                            "type": "string",
+                            "description": "The default action",
+                            "enum": [
+                                "Allow",
+                                "Deny"
+                            ]
+                        },
+                        "ipRules" : {
+                            "type":"array",
+                            "items": {
+                                "type":"string",
+                                "description": "IP Address in CIDR format",
+                                "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}($|/[1-9]$|/[1-2][0-9]$|/3[0-2]$)",
+                                "uniqueItems": true
+                            }
+                        },
+                        "virtualNetworkRules" : {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "action" : {
+                                        "type": "string",
+                                        "description": "The action",
+                                        "enum": [
+                                            "Allow",
+                                            "Deny"
+                                        ]
+                                    },
+                                    "virtualNetworkResourceId" : {
+                                        "type": "string",
+                                        "description": "The virtual network resource ID"
+                                    }
+                                }
+                            }
+                        }
                     }
                 },
                 "access_policies": {
@@ -162,7 +202,9 @@
             },
             "required": [
                 "name",
-                "sku_name"
+                "sku_name",
+                "networkAcls",
+                "access_policies"
             ]
         },
         "storage_account": {
@@ -205,400 +247,418 @@
                         }
                     }
                 },
-                "properties": {
+                "accessTier": {
+                    "type": "string",
+                    "default": "Hot",
+                    "description": "The access tier of the storage account",
+                    "enum": [
+                        "Hot",
+                        "Cool",
+                        "Premium"
+                    ]
+                },
+                "allowBlobPublicAccess": {
+                    "type": "boolean",
+                    "description": "Allow or disallow public access to all blobs or containers in the storage account"
+                },
+                "allowSharedKeyAccess": {
+                    "type": "boolean",
+                    "description": "Allow or disallow shared key access"
+                },
+                "azureFilesIdentityBasedAuthentication": {
                     "type": "object",
                     "properties": {
-                        "accessTier": {
+                        "activeDirectoryProperties": {
+                            "type": "object",
+                            "properties": {
+                                "domainName": {
+                                    "type": "string",
+                                    "description": "The domain name"
+                                },
+                                "netBiosDomainName": {
+                                    "type": "string",
+                                    "description": "The net bios domain name"
+                                },
+                                "forestName": {
+                                    "type": "string",
+                                    "description": "The resource forest"
+                                },
+                                "domainGuid": {
+                                    "type": "string",
+                                    "description": "The SID"
+                                },
+                                "domainSid": {
+                                    "type": "string",
+                                    "description": "The tenant ID"
+                                },
+                                "azureStorageSid": {
+                                    "type": "string",
+                                    "description": "The user display name"
+                                }
+                            }
+                        },
+                        "directoryServiceOptions": {
                             "type": "string",
-                            "description": "The access tier of the storage account",
+                            "description": "The directory service options",
                             "enum": [
-                                "Hot",
-                                "Cool",
-                                "Premium"
+                                "None",
+                                "AADDS"
                             ]
                         },
-                        "allowBlobPublicAccess": {
-                            "type": "boolean",
-                            "description": "Allow or disallow public access to all blobs or containers in the storage account"
-                        },
-                        "allowSharedKeyAccess": {
-                            "type": "boolean",
-                            "description": "Allow or disallow shared key access"
-                        },
-                        "azureFilesIdentityBasedAuthentication": {
-                            "type": "object",
-                            "properties": {
-                                "activeDirectoryProperties": {
-                                    "type": "object",
-                                    "properties": {
-                                        "domainName": {
-                                            "type": "string",
-                                            "description": "The domain name"
-                                        },
-                                        "netBiosDomainName": {
-                                            "type": "string",
-                                            "description": "The net bios domain name"
-                                        },
-                                        "forestName": {
-                                            "type": "string",
-                                            "description": "The resource forest"
-                                        },
-                                        "domainGuid": {
-                                            "type": "string",
-                                            "description": "The SID"
-                                        },
-                                        "domainSid": {
-                                            "type": "string",
-                                            "description": "The tenant ID"
-                                        },
-                                        "azureStorageSid": {
-                                            "type": "string",
-                                            "description": "The user display name"
-                                        }
-                                    }
-                                },
-                                "directoryServiceOptions": {
-                                    "type": "string",
-                                    "description": "The directory service options",
-                                    "enum": [
-                                        "None",
-                                        "AADDS"
-                                    ]
-                                },
-                                "defaultSharePermission": {
-                                    "type": "string",
-                                    "description": "The default share permission",
-                                    "enum": [
-                                        "None",
-                                        "Read",
-                                        "Write",
-                                        "Delete"
-                                    ]
-                                }
-                            }
-                        },
-                        "customDomain": {
-                            "type": "object",
-                            "properties": {
-                                "name": {
-                                    "type": "string",
-                                    "description": "The custom domain name"
-                                },
-                                "useSubDomainName": {
-                                    "type": "boolean",
-                                    "description": "Use sub domain name"
-                                }
-                            }
-                        },
-                        "defaultToOAuthAuthentication": {
-                            "type": "boolean",
-                            "description": "Default to OAuth authentication"
-                        },
-                        "dnsEndPointType": {
+                        "defaultSharePermission": {
                             "type": "string",
-                            "description": "The DNS endpoint type",
+                            "description": "The default share permission",
                             "enum": [
-                                "Azure",
-                                "Custom"
+                                "None",
+                                "Read",
+                                "Write",
+                                "Delete"
                             ]
-                        },
-                        "encryption": {
-                            "type": "object",
-                            "properties": {
-                                "identity": {
-                                    "type": "object",
-                                    "properties": {
-                                        "federatedIdentityClientId": {
-                                            "type": "string",
-                                            "description": "The federated identity client ID"
-                                        },
-                                        "userAssignedIdentityId": {
-                                            "type": "string",
-                                            "description": "The user assigned identity ID"
-                                        }
-                                    }
-                                },
-                                "keySource": {
-                                    "type": "string",
-                                    "description": "The key source",
-                                    "enum": [
-                                        "Microsoft.Storage",
-                                        "Microsoft.KeyVault"
-                                    ]
-                                },
-                                "keyvaultproperties": {
-                                    "type": "object",
-                                    "properties": {
-                                        "keyname": {
-                                            "type": "string",
-                                            "description": "The key name"
-                                        },
-                                        "keyversion": {
-                                            "type": "string",
-                                            "description": "The key version"
-                                        },
-                                        "keyvaulturi": {
-                                            "type": "string",
-                                            "description": "The key vault URI"
-                                        }
-                                    }
-                                },
-                                "requireInfrastructureEncryption": {
-                                    "type": "boolean",
-                                    "description": "Require infrastructure encryption"
-                                },
-                                "services": {
-                                    "type": "object",
-                                    "properties": {
-                                        "blob": {
-                                            "type": "object",
-                                            "properties": {
-                                                "enabled": {
-                                                    "type": "boolean",
-                                                    "description": "Enable blob encryption"
-                                                },
-                                                "lastenabledtime": {
-                                                    "type": "string",
-                                                    "description": "The last enabled time"
-                                                }
-                                            }
-                                        },
-                                        "file": {
-                                            "type": "object",
-                                            "properties": {
-                                                "enabled": {
-                                                    "type": "boolean",
-                                                    "description": "Enable file encryption"
-                                                },
-                                                "lastenabledtime": {
-                                                    "type": "string",
-                                                    "description": "The last enabled time"
-                                                }
-                                            }
-                                        },
-                                        "queue": {
-                                            "type": "object",
-                                            "properties": {
-                                                "enabled": {
-                                                    "type": "boolean",
-                                                    "description": "Enable queue encryption"
-                                                },
-                                                "lastenabledtime": {
-                                                    "type": "string",
-                                                    "description": "The last enabled time"
-                                                }
-                                            }
-                                        },
-                                        "table": {
-                                            "type": "object",
-                                            "properties": {
-                                                "enabled": {
-                                                    "type": "boolean",
-                                                    "description": "Enable table encryption"
-                                                },
-                                                "lastenabledtime": {
-                                                    "type": "string",
-                                                    "description": "The last enabled time"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "immutableStorageWithVersioning" : {
-                            "type": "object",
-                            "properties": {
-                                "enabled": {
-                                    "type": "boolean",
-                                    "description": "Enable immutable storage with versioning"
-                                },
-                                "immutabilityPolicy" : {
-                                    "type": "object",
-                                    "properties": {
-                                        "immutabilityPeriodSinceCreationInDays": {
-                                            "type": "number",
-                                            "description": "The immutability period since creation in days"
-                                        },
-                                        "allowProtectedAppendWrites": {
-                                            "type": "boolean",
-                                            "description": "Allow protected append writes"
-                                        },
-                                        "state" : {
-                                            "type": "string",
-                                            "description": "The state of the immutability policy",
-                                            "enum": [
-                                                "Unlocked",
-                                                "Locked"
-                                            ]
-                                        
-                                        }
-                                    }
-                                
-                                }
-                            }
-                        },
-                        "isHnsEnabled": {
-                            "type": "boolean",
-                            "description": "Is HNS enabled"
-                        },
-                        "isLocalBackupEnabled": {
-                            "type": "boolean",
-                            "description": "Is local backup enabled"
-                        },
-                        "isNfsV3Enabled": {
-                            "type": "boolean",
-                            "description": "Is NFS v3 enabled"
-                        },
-                        "isSfsEnabled": {
-                            "type": "boolean",
-                            "description": "Is SFS enabled"
-                        },
-                        "keypolicy" : {
-                            "type": "object",
-                            "properties": {
-                                "keyExpirationPeriodInDays": {
-                                    "type": "number",
-                                    "description": "The key expiration period in days"
-                                }
-                            }
-                        },
-                        "largeFileSharesState": {
-                            "type": "string",
-                            "description": "The large file shares state",
-                            "enum": [
-                                "Disabled",
-                                "Enabled"
-                            ]
-                        },
-                        "minimumTlsVersion": {
-                            "type": "string",
-                            "description": "The minimum TLS version",
-                            "enum": [
-                                "TLS1_0",
-                                "TLS1_1",
-                                "TLS1_2"
-                            ]
-                        },
-                        "networkAcls" : {
-                            "type": "object",
-                            "properties" : {
-                                "bypass" : {
-                                    "type": "string",
-                                    "description": "The bypass",
-                                    "enum": [
-                                        "AzureServices",
-                                        "None"
-                                    ]
-                                },
-                                "defaultAction" : {
-                                    "type": "string",
-                                    "description": "The default action",
-                                    "enum": [
-                                        "Allow",
-                                        "Deny"
-                                    ]
-                                },
-                                "ipRules" : {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "action" : {
-                                                "type": "string",
-                                                "description": "The action",
-                                                "enum": [
-                                                    "Allow",
-                                                    "Deny"
-                                                ]
-                                            },
-                                            "ipAddressOrRange" : {
-                                                "type": "string",
-                                                "description": "The IP address or range"
-                                            }
-                                        }
-                                    }
-                                },
-                                "virtualNetworkRules" : {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "action" : {
-                                                "type": "string",
-                                                "description": "The action",
-                                                "enum": [
-                                                    "Allow",
-                                                    "Deny"
-                                                ]
-                                            },
-                                            "virtualNetworkResourceId" : {
-                                                "type": "string",
-                                                "description": "The virtual network resource ID"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "publicNetworkAccess" : {
-                            "type": "string",
-                            "description": "The public network access",
-                            "enum": [
-                                "Disabled",
-                                "Enabled"
-                            ]
-                        },
-                        "routingprefrence" : {
-                            "type": "object",
-                            "properties": {
-                                "publishMicrosoftEndpoints" : {
-                                    "type": "boolean",
-                                    "description": "Publish Microsoft endpoints"
-                                },
-                                "publishInternetEndpoints" : {
-                                    "type": "boolean",
-                                    "description": "Publish internet endpoints"
-                                },
-                                "routingChoice" : {
-                                    "type": "string",
-                                    "description": "The routing choice",
-                                    "enum": [
-                                        "InternetRouting",
-                                        "MicrosoftRouting"
-                                    ]
-                                }
-                            }
-                        },
-                        "sasPolicy" : {
-                            "type": "object",
-                            "properties" : {
-                                "expirationAction" : {
-                                    "type": "string",
-                                    "description": "The expiration action",
-                                    "enum": [
-                                        "Allow",
-                                        "Deny"
-                                    ]
-                                },
-                                "sasExpirationPeriod" : {
-                                    "type": "number",
-                                    "description": "The SAS expiration period in days"
-                                }
-                            }
-                        },
-                        "supportsHttpsTrafficOnly": {
-                            "type": "boolean",
-                            "description": "Supports HTTPS traffic only"
                         }
                     }
                 },
-                "required": [
-                    "name",
-                    "sku",
-                    "kind"
-                ]
-            }
+                "customDomain": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "The custom domain name"
+                        },
+                        "useSubDomainName": {
+                            "type": "boolean",
+                            "description": "Use sub domain name"
+                        }
+                    }
+                },
+                "defaultToOAuthAuthentication": {
+                    "type": "boolean",
+                    "description": "Default to OAuth authentication"
+                },
+                "dnsEndPointType": {
+                    "type": "string",
+                    "description": "The DNS endpoint type",
+                    "enum": [
+                        "AzureDnsZone",
+                        "Standard"
+                    ]
+                },
+                "encryption": {
+                    "type": "object",
+                    "properties": {
+                        "identity": {
+                            "type": "object",
+                            "properties": {
+                                "federatedIdentityClientId": {
+                                    "type": "string",
+                                    "description": "The federated identity client ID"
+                                },
+                                "userAssignedIdentityId": {
+                                    "type": "string",
+                                    "description": "The user assigned identity ID"
+                                }
+                            }
+                        },
+                        "keySource": {
+                            "type": "string",
+                            "description": "The key source",
+                            "enum": [
+                                "Microsoft.Storage",
+                                "Microsoft.KeyVault"
+                            ]
+                        },
+                        "keyvaultproperties": {
+                            "type": "object",
+                            "properties": {
+                                "keyname": {
+                                    "type": "string",
+                                    "description": "The key name"
+                                },
+                                "keyversion": {
+                                    "type": "string",
+                                    "description": "The key version"
+                                },
+                                "keyvaulturi": {
+                                    "type": "string",
+                                    "description": "The key vault URI"
+                                }
+                            }
+                        },
+                        "requireInfrastructureEncryption": {
+                            "type": "boolean",
+                            "description": "Require infrastructure encryption"
+                        },
+                        "services": {
+                            "type": "object",
+                            "properties": {
+                                "blob": {
+                                    "type": "object",
+                                    "properties": {
+                                        "enabled": {
+                                            "type": "boolean",
+                                            "description": "Enable blob encryption"
+                                        },
+                                        "lastenabledtime": {
+                                            "type": "string",
+                                            "description": "The last enabled time"
+                                        }
+                                    }
+                                },
+                                "file": {
+                                    "type": "object",
+                                    "properties": {
+                                        "enabled": {
+                                            "type": "boolean",
+                                            "description": "Enable file encryption"
+                                        },
+                                        "lastenabledtime": {
+                                            "type": "string",
+                                            "description": "The last enabled time"
+                                        }
+                                    }
+                                },
+                                "queue": {
+                                    "type": "object",
+                                    "properties": {
+                                        "enabled": {
+                                            "type": "boolean",
+                                            "description": "Enable queue encryption"
+                                        },
+                                        "lastenabledtime": {
+                                            "type": "string",
+                                            "description": "The last enabled time"
+                                        }
+                                    }
+                                },
+                                "table": {
+                                    "type": "object",
+                                    "properties": {
+                                        "enabled": {
+                                            "type": "boolean",
+                                            "description": "Enable table encryption"
+                                        },
+                                        "lastenabledtime": {
+                                            "type": "string",
+                                            "description": "The last enabled time"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "immutableStorageWithVersioning" : {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "description": "Enable immutable storage with versioning"
+                        },
+                        "immutabilityPolicy" : {
+                            "type": "object",
+                            "properties": {
+                                "immutabilityPeriodSinceCreationInDays": {
+                                    "type": "number",
+                                    "description": "The immutability period since creation in days"
+                                },
+                                "allowProtectedAppendWrites": {
+                                    "type": "boolean",
+                                    "description": "Allow protected append writes"
+                                },
+                                "state" : {
+                                    "type": "string",
+                                    "description": "The state of the immutability policy",
+                                    "enum": [
+                                        "Unlocked",
+                                        "Locked"
+                                    ]
+                                
+                                }
+                            }
+                        
+                        }
+                    }
+                },
+                "isHnsEnabled": {
+                    "type": "boolean",
+                    "description": "Is HNS enabled"
+                },
+                "isLocalBackupEnabled": {
+                    "type": "boolean",
+                    "description": "Is local backup enabled"
+                },
+                "isNfsV3Enabled": {
+                    "type": "boolean",
+                    "description": "Is NFS v3 enabled"
+                },
+                "isSfsEnabled": {
+                    "type": "boolean",
+                    "description": "Is SFS enabled"
+                },
+                "keypolicy" : {
+                    "type": "object",
+                    "properties": {
+                        "keyExpirationPeriodInDays": {
+                            "type": "number",
+                            "description": "The key expiration period in days"
+                        }
+                    }
+                },
+                "largeFileSharesState": {
+                    "type": "string",
+                    "description": "The large file shares state",
+                    "enum": [
+                        "Disabled",
+                        "Enabled"
+                    ]
+                },
+                "minimumTlsVersion": {
+                    "type": "string",
+                    "description": "The minimum TLS version",
+                    "enum": [
+                        "TLS1_0",
+                        "TLS1_1",
+                        "TLS1_2"
+                    ]
+                },
+                "networkAcls" : {
+                    "type": "object",
+                    "properties" : {
+                        "bypass" : {
+                            "type": "string",
+                            "description": "The bypass",
+                            "enum": [
+                                "AzureServices",
+                                "None"
+                            ]
+                        },
+                        "defaultAction" : {
+                            "type": "string",
+                            "description": "The default action",
+                            "enum": [
+                                "Allow",
+                                "Deny"
+                            ]
+                        },
+                        "ipRules" : {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "action" : {
+                                        "type": "string",
+                                        "description": "The action",
+                                        "enum": [
+                                            "Allow",
+                                            "Deny"
+                                        ]
+                                    },
+                                    "ipAddressOrRange" : {
+                                        "type": "string",
+                                        "description": "The IP address or range"
+                                    }
+                                }
+                            }
+                        },
+                        "virtualNetworkRules" : {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "action" : {
+                                        "type": "string",
+                                        "description": "The action",
+                                        "enum": [
+                                            "Allow",
+                                            "Deny"
+                                        ]
+                                    },
+                                    "virtualNetworkResourceId" : {
+                                        "type": "string",
+                                        "description": "The virtual network resource ID"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "publicNetworkAccess" : {
+                    "type": "string",
+                    "description": "The public network access",
+                    "enum": [
+                        "Disabled",
+                        "Enabled"
+                    ]
+                },
+                "routingprefrence" : {
+                    "type": "object",
+                    "properties": {
+                        "publishMicrosoftEndpoints" : {
+                            "type": "boolean",
+                            "description": "Publish Microsoft endpoints"
+                        },
+                        "publishInternetEndpoints" : {
+                            "type": "boolean",
+                            "description": "Publish internet endpoints"
+                        },
+                        "routingChoice" : {
+                            "type": "string",
+                            "description": "The routing choice",
+                            "enum": [
+                                "InternetRouting",
+                                "MicrosoftRouting"
+                            ]
+                        }
+                    }
+                },
+                "sasPolicy" : {
+                    "type": "object",
+                    "properties" : {
+                        "expirationAction" : {
+                            "type": "string",
+                            "description": "The expiration action",
+                            "enum": [
+                                "Allow",
+                                "Deny"
+                            ]
+                        },
+                        "sasExpirationPeriod" : {
+                            "type": "number",
+                            "description": "The SAS expiration period in days"
+                        }
+                    }
+                },
+                "supportsHttpsTrafficOnly": {
+                    "type": "boolean",
+                    "description": "Supports HTTPS traffic only"
+                }
+            },                
+            "required": [
+                "name",
+                "sku",
+                "kind",
+                "extendedLocation",
+                "accessTier",
+                "allowBlobPublicAccess",
+                "allowSharedKeyAccess",
+                "azureFilesIdentityBasedAuthentication",
+                "customDomain",
+                "defaultToOAuthAuthentication",
+                "dnsEndPointType",
+                "encryption",
+                "immutableStorageWithVersioning",
+                "isHnsEnabled",
+                "isLocalBackupEnabled",
+                "isNfsV3Enabled",
+                "isSfsEnabled",
+                "keypolicy",
+                "largeFileSharesState",
+                "minimumTlsVersion",
+                "networkAcls",
+                "publicNetworkAccess",
+                "routingprefrence",
+                "sasPolicy",
+                "supportsHttpsTrafficOnly"
+            ]
         },
         "blob_service": {
             "type": "object",
@@ -608,45 +668,47 @@
                     "type": "string",
                     "description": "The name of the Storage Account which should be used as the parent for this blob service."
                 },
-                "properties": {
-                    "cors": {
-                        "type": "object",
-                        "properties": {
-                            "cors_Rules": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/$defs/cors_rule"
-                                },
-                                "uniqueItems": true
-                            }
+                "cors": {
+                    "type": "object",
+                    "properties": {
+                        "cors_Rules": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/$defs/cors_rule"
+                            },
+                            "uniqueItems": true
                         }
-                    },
-                    "container_delete_retention_policy": {
-                        "type": "object",
-                        "properties": {
-                            "days": {
-                                "type": "number",
-                                "description": "Specifies the number of days that the blob should be retained, between 1 and 365 days. Defaults to 7."
-                            }
-                        }
-                    },
-                    "delete_retention_policy": {
-                        "type": "object",
-                        "properties": {
-                            "days": {
-                                "type": "number",
-                                "description": "Specifies the number of days that the blob should be retained, between 1 and 365 days. Defaults to 7."
-                            }
-                        }
-                    },
-                    "isversioning_enabled": {
-                        "type": "boolean",
-                        "description": "Specifies whether versioning is enabled for the blob service. Defaults to false."
                     }
+                },
+                "container_delete_retention_policy": {
+                    "type": "object",
+                    "properties": {
+                        "days": {
+                            "type": "number",
+                            "description": "Specifies the number of days that the blob should be retained, between 1 and 365 days. Defaults to 7."
+                        }
+                    }
+                },
+                "delete_retention_policy": {
+                    "type": "object",
+                    "properties": {
+                        "days": {
+                            "type": "number",
+                            "description": "Specifies the number of days that the blob should be retained, between 1 and 365 days. Defaults to 7."
+                        }
+                    }
+                },
+                "isversioning_enabled": {
+                    "type": "boolean",
+                    "description": "Specifies whether versioning is enabled for the blob service. Defaults to false."
                 }
             },
             "required": [
-                "storage_account_parent"
+                "storage_account_parent",
+                "cors",
+                "container_delete_retention_policy",
+                "delete_retention_policy",
+                "isversioning_enabled"
             ]
         },
         "access_policy": {
@@ -734,7 +796,7 @@
                 "secret_permissions",
                 "certificate_permissions"
             ]
-        },        
+        },
         "cors_rule": {
             "type": "object",
             "description": "Block describing the rules for the cors configuration",
@@ -805,42 +867,41 @@
                     "type": "string",
                     "description": "The name of the Storage Account which should be used as the parent for this Container."
                 },
-                "properties": {
-                    "type": "object",
-                    "properties": {
-                        "defaultEncryptionScope": {
-                            "type": "string",
-                            "description": "The default encryption scope"
-                        },
-                        "denyEncryptionScopeOverride": {
-                            "type": "boolean",
-                            "description": "Deny encryption scope override"
-                        },
-                        "enableNfsV3AllSquash": {
-                            "type": "boolean",
-                            "description": "Enable NFS v3 all squash"
-                        },
-                        "enableNfsV3RootSquash": {
-                            "type": "boolean",
-                            "description": "Enable NFS v3 root squash"
-                        },
-                        "publicAccess": {
-                            "type": "string",
-                            "description": "The public access of the storage container",
-                            "enum": [
-                                "Blob",
-                                "Container",
-                                "None"
-                            ]
-                        }
-                    }
+                "defaultEncryptionScope": {
+                    "type": "string",
+                    "description": "The default encryption scope"
                 },
-                "required": [
-                    "name",
-                    "storage_account_parent",
-                    "blob_service_parent"
-                ]
-            }
+                "denyEncryptionScopeOverride": {
+                    "type": "boolean",
+                    "description": "Deny encryption scope override"
+                },
+                "enableNfsV3AllSquash": {
+                    "type": "boolean",
+                    "description": "Enable NFS v3 all squash"
+                },
+                "enableNfsV3RootSquash": {
+                    "type": "boolean",
+                    "description": "Enable NFS v3 root squash"
+                },
+                "publicAccess": {
+                    "type": "string",
+                    "description": "The public access of the storage container",
+                    "enum": [
+                        "Blob",
+                        "Container",
+                        "None"
+                    ]
+                }
+            },
+            "required": [
+                "name",
+                "storage_account_parent",
+                "defaultEncryptionScope",
+                "denyEncryptionScopeOverride",
+                "enableNfsV3AllSquash",
+                "enableNfsV3RootSquash",
+                "publicAccess"
+            ]
         },
         "firewall_rule": {
             "type": "object",
