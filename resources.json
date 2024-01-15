@@ -4,39 +4,42 @@
     "name": "rg-graves",
     "subscriptionName": "ASD Lab"
   },
-  "storage_accounts": [
-    {
-        "name": "saadammasterschema",
-        "sku": {
-            "name": "Standard_LRS"
-        },
-        "kind": "StorageV2",
-        "accessTier": "Hot",
-        "allowBlobPublicAccess": false,
-        "allowSharedKeyAccess": false,
-        "minimumTlsVersion": "TLS1_2",
-        "azureFilesIdentityBasedAuthentication": {},
-        "networkAcls": { },
-        "customDomain": {},
-        "dnsEndPointType": "",
-        "defaultToOAuthAuthentication": false,
-        "encryption": {},
-        "extendedLocation": {},
-        "immutableStorageWithVersioning": {},
-        "isHnsEnabled": false,
-        "isLargeFileSharesEnabled": false,
-        "routingPreference": {},
-        "supportsHttpsTrafficOnly": false,
-        "sasPolicy": {},
-        "isLocalBackupEnabled": false,
-        "isNfsV3Enabled": false,
-        "isSfsEnabled": false,
-        "keypolicy": {},
-        "largeFileSharesState": "Disabled",
-        "publicNetworkAccess": "Enabled",
-        "routingprefrence": {}
-    }
-  ],
+  "storage_accounts": {
+    "moduleVersion": "2022-09-01",
+    "storageaccountList": [
+        {
+          "name": "saadammasterschema",
+          "sku": {
+              "name": "Standard_LRS"
+          },
+          "kind": "StorageV2",
+          "accessTier": "Hot",
+          "allowBlobPublicAccess": false,
+          "allowSharedKeyAccess": false,
+          "minimumTlsVersion": "TLS1_2",
+          "azureFilesIdentityBasedAuthentication": {},
+          "networkAcls": { },
+          "customDomain": {},
+          "dnsEndPointType": "",
+          "defaultToOAuthAuthentication": false,
+          "encryption": {},
+          "extendedLocation": {},
+          "immutableStorageWithVersioning": {},
+          "isHnsEnabled": false,
+          "isLargeFileSharesEnabled": false,
+          "routingPreference": {},
+          "supportsHttpsTrafficOnly": false,
+          "sasPolicy": {},
+          "isLocalBackupEnabled": false,
+          "isNfsV3Enabled": false,
+          "isSfsEnabled": false,
+          "keypolicy": {},
+          "largeFileSharesState": "Disabled",
+          "publicNetworkAccess": "Enabled",
+          "routingprefrence": {}
+      }
+    ]
+  },
   "blob_services": [
     {
         "storage_account_parent": "saadammasterschema",
@@ -57,29 +60,15 @@
         "enableNfsV3RootSquash": false        
     }
   ],
-  "keyvaults": [
-    {
-      "name": "kvadamtesting",
-      "sku_name": "premium",
-      "access_policies": [
-      ],
-      "networkAcls": {}
-    }
-  ],
-  "mssql_servers": [
-    { 
-      "name": "sqlserveradamtest",
-      "administrator_login_username": "sqladmin",
-      "administrator_login_password": "P@ssw0rd1234"
-
-    }
-  ],
-  "mssql_databases": [
-    {
-      "name": "sqldbadamtest",
-      "server_parent": "sqlserveradamtest",
-      "collation": "SQL_Latin1_General_CP1_CI_AS",
-      "max_size_bytes": "2147483648"
-    }
-  ]
+  "keyvaults": {
+    "moduleVersion": "2021-11-01-preview",
+    "keyvaultList":[
+      {
+        "name": "kvadamtesting",
+        "sku_name": "premium",
+        "access_policies": [],
+        "networkAcls": {}
+      }
+    ]
+  }
 }

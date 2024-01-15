@@ -21,12 +21,25 @@
             ]
         },
         "storage_accounts": {
-            "type": "array",
+            "type": "object",
             "description": "",
-            "items": {
-                "$ref": "#/$defs/storage_account"
-            },
-            "uniqueItems": true
+            "properties": {
+                "moduleVersion": {
+                    "type": "string",
+                    "description": "The version of the module to be used to create resources.",
+                    "enum": [
+                        "2022-09-01"
+                    ]
+                },
+                "storageaccountList": {
+                    "type": "array",
+                    "description": "A refrence to the object for all of the storage account properties",
+                    "items": {
+                        "$ref": "#/$defs/storage_account"
+                    },
+                    "uniqueItems": true
+                }
+            }
         },
         "blob_services": {
             "type": "array",
@@ -43,27 +56,67 @@
             "uniqueItems": true
         },
         "keyvaults": {
-            "type": "array",
-            "items": {
-                "$ref": "#/$defs/keyvault"
-            },
-            "uniqueItems": true
+            "type": "object",
+            "description": "",
+            "properties": {
+                "moduleVersion": {
+                    "type": "string",
+                    "description": "The version of the module to be used to create resources.",
+                    "enum": [
+                        "2021-11-01-preview"
+                    ]
+                },
+                "keyvaultList": {
+                    "type": "array",
+                    "description": "A refrence to the object for all of the keyvault properties",
+                    "items": {
+                        "$ref": "#/$defs/keyvault"
+                    },
+                    "uniqueItems": true
+                }
+            }
         },
         "mssql_databases": {
-            "type": "array",
+            "type": "object",
             "description": "",
-            "items": {
-                "$ref": "#/$defs/mssql_database"
-            },
-            "uniqueItems": true
+            "properties": {
+                "moduleVersion": {
+                    "type": "string",
+                    "description": "The version of the module to be used to create resources.",
+                    "enum": [
+                        "replaceme"
+                    ]
+                },
+                "mssql_databaselist": {
+                    "type": "array",
+                    "description": "",
+                    "items": {
+                        "$ref": "#/$defs/mssql_database"
+                    },
+                    "uniqueItems": true
+                }
+            }
         },
         "mssql_servers": {
-            "type": "array",
+            "type": "object",
             "description": "",
-            "items": {
-                "$ref": "#/$defs/mssql_server"
-            },
-            "uniqueItems": true
+            "properties": {
+                "moduleVersion": {
+                    "type": "string",
+                    "description": "The version of the module to be used to create resources.",
+                    "enum": [
+                        "replaceme"
+                    ]
+                },
+                "mssql_serverlist": {
+                    "type": "array",
+                    "description": "",
+                    "items": {
+                        "$ref": "#/$defs/mssql_server"
+                    },
+                    "uniqueItems": true
+                }
+            }
         }
     },
     "$defs": {
@@ -96,13 +149,13 @@
                     "type": "string",
                     "description": "."
                 },
-                "azuread_administrator" : {
-                    "login_username" : {
-                        "type" : "string",
+                "azuread_administrator": {
+                    "login_username": {
+                        "type": "string",
                         "description": ""
                     },
-                    "object_id" : {
-                        "type" : "string",
+                    "object_id": {
+                        "type": "string",
                         "description": ""
                     }
                 },
@@ -113,12 +166,12 @@
                     },
                     "uniqueItems": true
                 },
-                "administrator_login_username" : {
-                    "type" : "string",
+                "administrator_login_username": {
+                    "type": "string",
                     "description": ""
                 },
-                "administrator_login_password" : {
-                    "type" : "string",
+                "administrator_login_password": {
+                    "type": "string",
                     "description": ""
                 }
             },
@@ -142,10 +195,10 @@
                         "premium"
                     ]
                 },
-                "networkAcls" : {
+                "networkAcls": {
                     "type": "object",
-                    "properties" : {
-                        "bypass" : {
+                    "properties": {
+                        "bypass": {
                             "type": "string",
                             "description": "The bypass",
                             "enum": [
@@ -153,7 +206,7 @@
                                 "None"
                             ]
                         },
-                        "defaultAction" : {
+                        "defaultAction": {
                             "type": "string",
                             "description": "The default action",
                             "enum": [
@@ -161,21 +214,21 @@
                                 "Deny"
                             ]
                         },
-                        "ipRules" : {
-                            "type":"array",
+                        "ipRules": {
+                            "type": "array",
                             "items": {
-                                "type":"string",
+                                "type": "string",
                                 "description": "IP Address in CIDR format",
                                 "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}($|/[1-9]$|/[1-2][0-9]$|/3[0-2]$)",
                                 "uniqueItems": true
                             }
                         },
-                        "virtualNetworkRules" : {
+                        "virtualNetworkRules": {
                             "type": "array",
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "action" : {
+                                    "action": {
                                         "type": "string",
                                         "description": "The action",
                                         "enum": [
@@ -183,7 +236,7 @@
                                             "Deny"
                                         ]
                                     },
-                                    "virtualNetworkResourceId" : {
+                                    "virtualNetworkResourceId": {
                                         "type": "string",
                                         "description": "The virtual network resource ID"
                                     }
@@ -446,14 +499,14 @@
                         }
                     }
                 },
-                "immutableStorageWithVersioning" : {
+                "immutableStorageWithVersioning": {
                     "type": "object",
                     "properties": {
                         "enabled": {
                             "type": "boolean",
                             "description": "Enable immutable storage with versioning"
                         },
-                        "immutabilityPolicy" : {
+                        "immutabilityPolicy": {
                             "type": "object",
                             "properties": {
                                 "immutabilityPeriodSinceCreationInDays": {
@@ -464,17 +517,15 @@
                                     "type": "boolean",
                                     "description": "Allow protected append writes"
                                 },
-                                "state" : {
+                                "state": {
                                     "type": "string",
                                     "description": "The state of the immutability policy",
                                     "enum": [
                                         "Unlocked",
                                         "Locked"
                                     ]
-                                
                                 }
                             }
-                        
                         }
                     }
                 },
@@ -494,7 +545,7 @@
                     "type": "boolean",
                     "description": "Is SFS enabled"
                 },
-                "keypolicy" : {
+                "keypolicy": {
                     "type": "object",
                     "properties": {
                         "keyExpirationPeriodInDays": {
@@ -520,10 +571,10 @@
                         "TLS1_2"
                     ]
                 },
-                "networkAcls" : {
+                "networkAcls": {
                     "type": "object",
-                    "properties" : {
-                        "bypass" : {
+                    "properties": {
+                        "bypass": {
                             "type": "string",
                             "description": "The bypass",
                             "enum": [
@@ -531,7 +582,7 @@
                                 "None"
                             ]
                         },
-                        "defaultAction" : {
+                        "defaultAction": {
                             "type": "string",
                             "description": "The default action",
                             "enum": [
@@ -539,12 +590,12 @@
                                 "Deny"
                             ]
                         },
-                        "ipRules" : {
+                        "ipRules": {
                             "type": "array",
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "action" : {
+                                    "action": {
                                         "type": "string",
                                         "description": "The action",
                                         "enum": [
@@ -552,19 +603,19 @@
                                             "Deny"
                                         ]
                                     },
-                                    "ipAddressOrRange" : {
+                                    "ipAddressOrRange": {
                                         "type": "string",
                                         "description": "The IP address or range"
                                     }
                                 }
                             }
                         },
-                        "virtualNetworkRules" : {
+                        "virtualNetworkRules": {
                             "type": "array",
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "action" : {
+                                    "action": {
                                         "type": "string",
                                         "description": "The action",
                                         "enum": [
@@ -572,7 +623,7 @@
                                             "Deny"
                                         ]
                                     },
-                                    "virtualNetworkResourceId" : {
+                                    "virtualNetworkResourceId": {
                                         "type": "string",
                                         "description": "The virtual network resource ID"
                                     }
@@ -581,7 +632,7 @@
                         }
                     }
                 },
-                "publicNetworkAccess" : {
+                "publicNetworkAccess": {
                     "type": "string",
                     "description": "The public network access",
                     "enum": [
@@ -589,18 +640,18 @@
                         "Enabled"
                     ]
                 },
-                "routingprefrence" : {
+                "routingprefrence": {
                     "type": "object",
                     "properties": {
-                        "publishMicrosoftEndpoints" : {
+                        "publishMicrosoftEndpoints": {
                             "type": "boolean",
                             "description": "Publish Microsoft endpoints"
                         },
-                        "publishInternetEndpoints" : {
+                        "publishInternetEndpoints": {
                             "type": "boolean",
                             "description": "Publish internet endpoints"
                         },
-                        "routingChoice" : {
+                        "routingChoice": {
                             "type": "string",
                             "description": "The routing choice",
                             "enum": [
@@ -610,10 +661,10 @@
                         }
                     }
                 },
-                "sasPolicy" : {
+                "sasPolicy": {
                     "type": "object",
-                    "properties" : {
-                        "expirationAction" : {
+                    "properties": {
+                        "expirationAction": {
                             "type": "string",
                             "description": "The expiration action",
                             "enum": [
@@ -621,7 +672,7 @@
                                 "Deny"
                             ]
                         },
-                        "sasExpirationPeriod" : {
+                        "sasExpirationPeriod": {
                             "type": "number",
                             "description": "The SAS expiration period in days"
                         }
@@ -631,7 +682,7 @@
                     "type": "boolean",
                     "description": "Supports HTTPS traffic only"
                 }
-            },                
+            },
             "required": [
                 "name",
                 "sku",
